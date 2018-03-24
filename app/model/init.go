@@ -1,10 +1,6 @@
 package model
 
 import (
-	//"database/sql"
-
-	//"github.com/dingoblog/dingo/app/utils"
-
 	"github.com/dingoblog/dingo/app/utils"
 )
 
@@ -87,23 +83,7 @@ func InitializeDb() {
 	initConnection()
 	createTableIfNotExist()
 	createWelcomeData()
-	//if !dbExists {
-	//	if err := createWelcomeData(); err != nil {
-	//		return err
-	//	}
-	//}
 }
-
-//func initConnection(dbPath string) error {
-//	var err error
-//	db, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/dingo?charset=utf8&parseTime=true")
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
-
 
 func createWelcomeData() error {
 	var err error

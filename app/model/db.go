@@ -2,63 +2,33 @@ package model
 
 import (
 	_ "github.com/go-sql-driver/mysql"
-	"io/ioutil"
-	"os"
 	"fmt"
-	"path/filepath"
 	"database/sql"
-	"encoding/json"
+	"github.com/dingoblog/dingo/config"
 )
 
-type DbConfig struct {
-	DbHost string `json:"db_host"`
-	DbPort int    `json:"db_port"`
-	DbUser string `json:"db_user"`
-	DbPwd  string `json:"db_pwd"`
-	DbName string `json:"db_name"`
-}
 
 var (
 	Driver = "mysql"
 )
 
-var dbConfig DbConfig
 var db *sql.DB
 
+//初始化mysql数据库的连接
 func initConnection() {
-	initDbConfig()
 	var erro error
-	db, erro = sql.Open(Driver, fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true",
-		dbConfig.DbUser, dbConfig.DbPwd, dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbName))
+	db, erro = sql.Open(Driver, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
+		config.Conf.MySqlConf.DbUser,
+		config.Conf.MySqlConf.DbPwd,
+		config.Conf.MySqlConf.DbHost,
+		config.Conf.MySqlConf.DbPort,
+		config.Conf.MySqlConf.DbName))
 	if erro != nil {
 		panic(erro)
 	}
 }
 
-func fileExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return err == nil
-}
-func initDbConfig() {
-	workroot, erro := os.Getwd()
-	if erro != nil {
-		panic(erro)
-	}
-	dbFilePath := filepath.Join(workroot, "./config/config.json")
-
-	if fileExists(dbFilePath) {
-
-	}
-	data, erro := ioutil.ReadFile(dbFilePath)
-	if erro != nil {
-		panic(erro)
-	}
-	erro = json.Unmarshal([]byte(string(data)), &dbConfig)
-	if erro != nil {
-		panic(erro.Error())
-	}
-}
-
+//创建表
 func createTableIfNotExist() error {
 	tx, erro := db.Begin()
 	if erro != nil {
@@ -75,6 +45,7 @@ func createTableIfNotExist() error {
 	checkBlogSettings()
 	return erro
 }
+
 func checkBlogSettings() {
 	SetSettingIfNotExists("theme", "default", "blog")
 	SetSettingIfNotExists("title", "My Blog", "blog")

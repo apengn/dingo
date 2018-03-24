@@ -2,10 +2,10 @@
 package Dingo
 
 import (
-	"fmt"
 	"github.com/dinever/golf"
 	"github.com/dingoblog/dingo/app/handler"
 	"github.com/dingoblog/dingo/app/model"
+	"github.com/dingoblog/dingo/config"
 )
 
 
@@ -19,9 +19,9 @@ func Init(privKey, pubKey string) {
 }
 
 // Run starts our HTTP server on the given port.
-func Run(portNumber string) {
+func Run() {
 	app := golf.New()
 	app = handler.Initialize(app)
-	fmt.Printf("Application Started on port %s\n", portNumber)
-	app.Run(":" + portNumber)
+	//fmt.Printf("Application Started on port %s\n", portNumber)
+	app.Run(config.Conf.RunPort)
 }
