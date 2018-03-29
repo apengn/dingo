@@ -3,13 +3,15 @@ package handler
 import (
 	"net/http"
 	"strconv"
-
 	"github.com/dinever/golf"
 	"github.com/dingoblog/dingo/app/model"
 )
 
 func AuthMiddleware(next golf.HandlerFunc) golf.HandlerFunc {
+
 	fn := func(ctx *golf.Context) {
+
+
 		userNum, err := model.GetNumberOfUsers()
 		if err == nil && userNum == 0 {
 			ctx.Redirect("/signup/")

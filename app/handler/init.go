@@ -28,7 +28,6 @@ func Initialize(app *golf.Application) *golf.Application {
 
 	app.SessionManager = golf.NewMemorySessionManager()
 	app.Error(404, NotFoundHandler)
-
 	registerAdminURLHandlers(app)
 	registerHomeHandler(app)
 	registerAPIHandler(app)
@@ -37,6 +36,7 @@ func Initialize(app *golf.Application) *golf.Application {
 }
 
 func registerFuncMap(app *golf.Application) {
+
 	app.View.FuncMap["DateFormat"] = utils.DateFormat
 	app.View.FuncMap["Now"] = utils.Now
 	app.View.FuncMap["Html2Str"] = utils.Html2Str
@@ -47,6 +47,7 @@ func registerFuncMap(app *golf.Application) {
 }
 
 func registerMiddlewares(app *golf.Application) {
+
 	app.Use(
 		golf.LoggingMiddleware(os.Stdout),
 		golf.RecoverMiddleware,
@@ -56,6 +57,7 @@ func registerMiddlewares(app *golf.Application) {
 
 func registerAdminURLHandlers(app *golf.Application) {
 	authChain := golf.NewChain(AuthMiddleware)
+
 	app.Get("/login/", AuthLoginPageHandler)
 	app.Post("/login/", AuthLoginHandler)
 

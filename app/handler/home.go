@@ -20,7 +20,6 @@ func RegisterFunctions(app *golf.Application) {
 
 func HomeHandler(ctx *golf.Context) {
 	p := ctx.Param("page")
-
 	var page int
 	if p == "" {
 		page = 1

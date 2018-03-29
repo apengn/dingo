@@ -12,6 +12,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/astaxie/beego/logs"
 )
 
 // A JWT is a JSON web token, and contains all the values necessary to create
@@ -36,17 +37,17 @@ func InitializeKey(privKeyPath, pubKeyPath string) {
 
 	signBytes, err := ioutil.ReadFile(privKeyPath)
 	if err != nil {
-		log.Fatal(err)
+		logs.Error(err)
 	}
 
 	signKey, err = jwt.ParseRSAPrivateKeyFromPEM(signBytes)
 	if err != nil {
-		log.Fatal(err)
+		logs.Error(err)
 	}
 
 	verifyBytes, err := ioutil.ReadFile(pubKeyPath)
 	if err != nil {
-		log.Fatal(err)
+		logs.Error(err)
 	}
 
 	verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
@@ -69,6 +70,7 @@ func NewJWT(user *User) (JWT, error) {
 
 	tokenString, err := token.SignedString(signKey)
 	if err != nil {
+		logs.Error(err)
 		return JWT{}, err
 	}
 
@@ -129,6 +131,7 @@ func GenerateJWTKeys(bits int) ([]byte, []byte, error) {
 	// http://stackoverflow.com/questions/21151714/go-generate-an-ssh-public-key
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
+		logs.Error(err)
 		return nil, nil, err
 	}
 
@@ -143,6 +146,7 @@ func GenerateJWTKeys(bits int) ([]byte, []byte, error) {
 	publicKey := privateKey.PublicKey
 	publicKeyDer, err := x509.MarshalPKIXPublicKey(&publicKey)
 	if err != nil {
+		logs.Error(err)
 		return nil, nil, err
 	}
 

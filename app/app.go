@@ -6,9 +6,9 @@ import (
 	"github.com/dingoblog/dingo/app/handler"
 	"github.com/dingoblog/dingo/app/model"
 	"github.com/dingoblog/dingo/config"
+	_ "github.com/dingoblog/dingo/log/tail"
+	_ "github.com/dingoblog/dingo/log"
 )
-
-
 
 // Init loads a public and private key pair used to create and validate JSON
 // web tokens, or creates a new pair if they don't exist. It also initializes

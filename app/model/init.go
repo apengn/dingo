@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/dingoblog/dingo/app/utils"
+	"github.com/astaxie/beego/logs"
 )
 
 //var db *sql.DB
@@ -101,6 +102,7 @@ func createWelcomeData() error {
 	tags := GenerateTagsFromCommaString("Welcome, Dingo")
 	err = p.Save(tags...)
 	if err != nil {
+		logs.Error(err)
 		return err
 	}
 

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"database/sql"
 	"github.com/dingoblog/dingo/config"
+	"github.com/astaxie/beego/logs"
 )
-
 
 var (
 	Driver = "mysql"
@@ -24,19 +24,23 @@ func initConnection() {
 		config.Conf.MySqlConf.DbPort,
 		config.Conf.MySqlConf.DbName))
 	if erro != nil {
+		logs.Error(erro)
 		panic(erro)
 	}
+	logs.Info("open mysql success")
 }
 
 //创建表
 func createTableIfNotExist() error {
 	tx, erro := db.Begin()
 	if erro != nil {
+		logs.Error(erro)
 		tx.Rollback()
 		return erro
 	}
 	for _, createTable := range CreateTables.createTableStr {
 		if _, erro := tx.Exec(createTable); erro != nil {
+			logs.Error(erro)
 			tx.Rollback()
 			return erro
 		}
