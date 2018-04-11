@@ -59,6 +59,7 @@ func (c *Comment) Save() error {
 	c.Avatar = utils.Gravatar(c.Email, "50")
 	err := meddler.Save(db, "comments", c)
 	return err
+	//return db.NewRecord(c)
 }
 
 // ToJson returns a comment as a map, in order to be encoded as JSON.

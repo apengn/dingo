@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/dingoblog/dingo/app"
+
+	//"github.com/gorilla/mux"
 )
 
 func main() {
@@ -14,4 +16,20 @@ func main() {
 
 	Dingo.Init(*privKeyPathPtr, *pubKeyPathPtr)
 	Dingo.Run()
+
+	//router := gin.New()
+	//router.Delims("{[{", "}]}")
+	//gin.SetMode(gin.ReleaseMode)
+	//mux.Router{}
+	//router.Use(gin.Logger())
+	//router.Use(gin.Recovery())
+	//fmt.Println(os.Getwd())
+	//
+	//router.Static("/static", "/view/admin/*")
+	//
+	//
+	//router.LoadHTMLGlob("./view/**/**/**/**/**/*")
+	//
+	//handler.InitializeGin(router)
+	//router.Run(config.Conf.RunPort)
 }

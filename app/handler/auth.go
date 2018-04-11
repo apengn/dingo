@@ -8,6 +8,8 @@ import (
 	"github.com/dingoblog/dingo/app/model"
 	"github.com/astaxie/beego/logs"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 const Email string = "^(((([a-zA-Z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])+(\\.([a-zA-Z]|\\d|[!#\\$%&'\\*\\+\\-\\/=\\?\\^_`{\\|}~]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])+)*)|((\\x22)((((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(([\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]|\\x21|[\\x23-\\x5b]|[\\x5d-\\x7e]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])|(\\([\\x01-\\x09\\x0b\\x0c\\x0d-\\x7f]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}]))))*(((\\x20|\\x09)*(\\x0d\\x0a))?(\\x20|\\x09)+)?(\\x22)))@((([a-zA-Z]|\\d|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])|(([a-zA-Z]|\\d|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])([a-zA-Z]|\\d|-|\\.|_|~|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])*([a-zA-Z]|\\d|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])))\\.)+(([a-zA-Z]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])|(([a-zA-Z]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])([a-zA-Z]|\\d|-|\\.|_|~|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])*([a-zA-Z]|[\\x{00A0}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFEF}])))\\.?$"
@@ -19,6 +21,36 @@ func AuthLoginPageHandler(ctx *golf.Context) {
 	ctx.Loader("admin").Render("login.html", map[string]interface{}{
 		"UserExists": userNum > 0,
 	})
+}
+
+func AuthLoginPageHandlerGin(engine *gin.Context) {
+	userNum, _ := model.GetNumberOfUsers()
+	engine.HTML(http.StatusOK, "login.html", gin.H{
+		"UserExists": userNum > 0,
+	})
+}
+
+func AuthLoginHandlerGin(ctx *gin.Context) {
+	email := ctx.Request.FormValue("email")
+	password := ctx.Request.FormValue("password")
+	rememberMe := ctx.Request.FormValue("remember-me")
+	user := &model.User{Email: email}
+	log := fmt.Sprintln(ctx.Request.Host, ctx.Request.URL, "Params:", "{email:", email, ",password:", password, ",remember-me:", rememberMe, "}\n")
+
+	err := user.GetUserByEmail()
+	if user == nil || err != nil {
+		ctx.JSON(300, map[string]interface{}{"status": "error"})
+		logs.Info(log, `response:    {"status": "user not exist "}`)
+		return
+	}
+	if !user.CheckPassword(password) {
+		ctx.JSON(300, map[string]interface{}{"status": "error"})
+		logs.Info(log, `response:   {"status": "password error"}`)
+		return
+	}
+
+	ctx.JSON(200, map[string]interface{}{"status": "success"})
+	logs.Info(log, `response:   {"status": "login success"}`)
 }
 
 func AuthSignUpPageHandler(ctx *golf.Context) {

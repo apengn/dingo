@@ -5,13 +5,15 @@ import (
 	"strconv"
 	"github.com/dinever/golf"
 	"github.com/dingoblog/dingo/app/model"
+	"github.com/astaxie/beego/logs"
+	"fmt"
 )
 
 func AuthMiddleware(next golf.HandlerFunc) golf.HandlerFunc {
 
 	fn := func(ctx *golf.Context) {
 
-
+		logs.Info(fmt.Sprintf("url:%s    form:%v,   %v", ctx.Request.URL.Path,ctx.Request.Form,ctx.Params))
 		userNum, err := model.GetNumberOfUsers()
 		if err == nil && userNum == 0 {
 			ctx.Redirect("/signup/")

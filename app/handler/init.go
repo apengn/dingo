@@ -7,7 +7,34 @@ import (
 	"github.com/dinever/golf"
 	"github.com/dingoblog/dingo/app/model"
 	"github.com/dingoblog/dingo/app/utils"
+	"github.com/gin-gonic/gin"
+	"fmt"
+	"strings"
 )
+
+func getCurrentDirectory() string {
+	//dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return strings.Replace(dir, "\\", "/", -1)
+}
+
+func InitializeGin(engine *gin.Engine) {
+
+	engine.Use(func(context *gin.Context) {
+		middleWareHandleFunc(context)
+	})
+	engine.GET("/login/", AuthLoginPageHandlerGin)
+	engine.POST("/login/", AuthLoginHandlerGin)
+
+}
+
+//处理中间的数据
+func middleWareHandleFunc(c *gin.Context) {
+
+}
 
 func Initialize(app *golf.Application) *golf.Application {
 	app.Config.Set("app/static_dir", "static")
